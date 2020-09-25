@@ -1,0 +1,16 @@
+server:
+  port: 8887
+  servlet:
+    context-path: /activiti
+
+spring:
+  profiles:
+    active:
+      - log
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/activiti?useSSL=false&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    type: com.mysql.cj.jdbc.MysqlDataSource
+
