@@ -6,6 +6,7 @@ import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.zip.ZipInputStream;
 
@@ -33,6 +35,7 @@ class ActivitiApplicationTests {
     }
 
     /*================================================创建流程部署流程完成流程=============================================*/
+
     /**
      * 流程定义部署
      */
@@ -207,5 +210,32 @@ class ActivitiApplicationTests {
         } catch (Exception e) {
 
         }
+    }
+
+    /*===================================================保存资源=======================================================*/
+
+    @Test
+    void saveResource() throws Exception {
+        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+        RepositoryService repositoryService = processEngine.getRepositoryService();
+        ProcessDefinitionQuery processDefinitionQuery = repositoryService.createProcessDefinitionQuery();
+        processDefinitionQuery.processDefinitionKey("holidayProcess");
+        // 流程定义
+        ProcessDefinition processDefinition = processDefinitionQuery.singleResult();
+        // 流程定义信息
+        String deploymentId = processDefinition.getDeploymentId();
+        // 本地资源
+        InputStream pngIs = repositoryService.getResourceAsStream(deploymentId, processDefinition.getDiagramResourceName());
+        InputStream bpmnIs = repositoryService.getResourceAsStream(deploymentId, processDefinition.getResourceName());
+        // 输出
+        OutputStream pngOs = new FileOutputStream("D:\\0\\" + processDefinition.getDiagramResourceName());
+        OutputStream bpmnOs = new FileOutputStream("D:\\0\\" + processDefinition.getResourceName());
+        IOUtils.copy(pngIs, pngOs);
+        IOUtils.copy(bpmnIs, bpmnOs);
+        // 回收资源
+        pngIs.close();
+        pngOs.close();
+        bpmnIs.close();
+        bpmnOs.close();
     }
 }
